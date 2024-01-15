@@ -10,14 +10,14 @@ async function Sidebar({ children }: {
     const conversations = await getConversations()
     return (
         <div className="h-full w-screen flex">
-            <aside className="h-full min-w-[300px] bg-zinc-400" >
+            {/* <aside className="h-full min-w-[300px] bg-zinc-400" >
                 <DesktopSidebarHeader
                     currentUser={currentUserPrisma}
                 />
                 <ConversationList
                     conversations={conversations}
                 />
-            </aside>
+            </aside> */}
             <main className="w-full flex justify-center">
                 {children}
             </main>
