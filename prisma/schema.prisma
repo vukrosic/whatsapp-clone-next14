@@ -12,16 +12,17 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  firstName      String?
-  lastName       String?
-  username       String   @unique
-  phoneNumber    String   @unique
-  statusImageUrl String?
-  about          String?
-  externalUserId String   @unique
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName       String?
+  lastName        String?
+  username        String   @unique
+  phoneNumber     String   @unique
+  profileImageUrl String?
+  statusImageUrl  String?
+  about           String?
+  externalUserId  String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   conversationIds String[]       @db.ObjectId
   conversations   Conversation[] @relation(fields: [conversationIds], references: [id])

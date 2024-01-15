@@ -9,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import NewContactSheet from "./NewContactSheet";
+import UserList from "../../UserList";
 
 interface NewChatSheetProps {
     currentUser: User & {
@@ -34,7 +35,7 @@ const NewChatSheet = ({
     }
 
     const handleRemoveContact = (newContacts: User[]) => {
-        setContacts(contacts)
+        setContacts(newContacts)
     }
 
 
@@ -91,6 +92,27 @@ const NewChatSheet = ({
                                 />
                             </div>
                         </button>
+
+                        <button
+                            className="flex m-6 relative items-center"
+                            onClick={() => setIsModalOpen(true)}>
+                            <Avatar className="w-12 h-12">
+                                <AvatarImage
+                                    src="/images/Community.svg"
+                                />
+                                <AvatarFallback>GR</AvatarFallback>
+                            </Avatar>
+                            <div className="ml-4 text-left">
+                                <h4 className="text-[1rem]">New group</h4>
+                            </div>
+                        </button>
+
+                        <div className="ml-12 my-5 text-primary font-light">CONTACTS</div>
+
+                        <UserList
+                            contacts={contacts}
+                            handleRemoveContact={handleRemoveContact}
+                        />
                     </ScrollArea>
                 </SheetContent>
             </Sheet>
