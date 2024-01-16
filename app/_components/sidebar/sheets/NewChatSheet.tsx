@@ -41,13 +41,13 @@ const NewChatSheet = ({
 
     return (
         <div>
-            {(currentUser !== undefined) &&
+            {/* {(currentUser !== undefined) &&
                 <div>Create a group</div>
-            }
+            } */}
 
             <Sheet>
                 <SheetTrigger asChild>
-                    <button>
+                    <button className="flex items-center">
                         <Image className="hover:cursor-pointer"
                             src={"/images/NewChat.svg"}
                             alt="New Chat"
