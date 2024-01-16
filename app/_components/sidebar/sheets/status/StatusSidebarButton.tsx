@@ -1,10 +1,12 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
+import { UploadButton, Uploader, UploadDropzone } from "@/lib/uploadthing";
 import { User } from "@prisma/client";
 import axios from "axios";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import "@uploadthing/react/styles.css"
 
 interface StatusButtonProps {
     user: User;
@@ -88,7 +90,7 @@ const StatusSidebarButton = ({
 
     return (
         <div>
-            {true ? (
+            {hasStory ? (
                 <div>
                     <button onClick={toggleShowStory}>
                         <StatusButton
@@ -105,10 +107,47 @@ const StatusSidebarButton = ({
                     }
                 </div>
             ) : (
-                // <UploadButton
-                //     content{{}}
-                // />
-                <div>Button</div>
+                <UploadButton
+                    content={{
+                        button({ ready }) {
+                            const statusTitle = ready ? "My Status" : "Loading...";
+                            const statusDescription = ready ? "Add to my status" : "Wait a moment";
+                            return (
+                                <StatusButton
+                                    statusTitle={statusTitle}
+                                    statusDescription={statusDescription}
+                                    user={user}
+                                    hasStory={hasStory}
+                                />
+                            )
+                        }
+                    }}
+                    endpoint="statusImage"
+                    appearance={{
+                        allowedContent: { display: 'none' },
+                        button: { border: 'none', background: '#fff', cursor: 'pointer', height: '100%', width: '100%', justifyContent: 'start' }
+                    }}
+                    onUploadError={(err: Error) => {
+                        console.log(err)
+                    }}
+                    onUploadBegin={() => {
+                        toast({
+                            title: "Uploading story",
+                            description: "Wait a minute...",
+                            duration: 30000,
+                        })
+                    }}
+                    onClientUploadComplete={(res) => {
+                        toast({
+                            title: "Upload complete!",
+                            className: "bg-green-500",
+                            duration: 2000,
+                        })
+                        axios.post('/api/status', { statusImageUrl: res[0].url })
+                            .then(res => { user.statusImageUrl = res.data.statusImageUrl })
+                            .catch(error => { console.log(error) })
+                    }}
+                />
             )}
             <Toaster />
         </div>
