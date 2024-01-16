@@ -3,6 +3,8 @@ import { FullMessageType } from "@/app/_types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import MessageBox from "./MessageBox";
+import { pusherClient } from "@/lib/pusher";
+import { find } from 'lodash';
 
 interface BodyProps {
     initialMessages: FullMessageType[];
@@ -17,9 +19,50 @@ const Body = ({
     const [messages, setMessages] = useState(initialMessages)
     const { conversationId } = useConversation()
 
-    // useEffect(() => {
-    //     axios.post(`/api/conversations/${conversationId}/seen`)
-    // }, [conversationId])
+    useEffect(() => {
+        axios.post(`/api/conversations/${conversationId}/seen`)
+    }, [conversationId])
+
+
+    useEffect(() => {
+        pusherClient.subscribe(conversationId);
+
+        const newMessageHander = (message: FullMessageType) => {
+            axios.post(`/api/conversations/${conversationId}/seen`)
+
+            setMessages((current) => {
+                if (find(current, { id: message.id })) {
+                    return current;
+                }
+
+                return [...current, message]
+            });
+        };
+
+        const updateMessageHandler = (receivedMessages: FullMessageType[]) => {
+            setMessages((current) => current.map((currentMessage) => {
+                const matchingReceivedMessage = receivedMessages.find((receivedMessage) => receivedMessage.id === currentMessage.id);
+
+                if (matchingReceivedMessage) {
+                    return matchingReceivedMessage;
+                }
+
+                return currentMessage;
+            }));
+        }
+
+
+        // executes on mount or when conversationId changes
+        pusherClient.bind('messages:new', newMessageHander);
+        pusherClient.bind('message:update', updateMessageHandler);
+
+        // executes on unmount or when conversationId changes, but before the above
+        return () => {
+            pusherClient.unsubscribe(conversationId);
+            pusherClient.unbind('messages:new', newMessageHander);
+            pusherClient.unbind('message:update', updateMessageHandler);
+        }
+    }, [conversationId])
 
     return (
         <div className="flex-1 overflow-y-auto bg-pink-100">
