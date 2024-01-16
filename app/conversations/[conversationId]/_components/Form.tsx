@@ -3,6 +3,7 @@ import axios from "axios";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import MessageInput from "./MessageInput";
 import EmojiPicker from "./EmojiPicker";
+import UploadFileButton from "./UploadFileButton";
 
 const Form = () => {
     const { conversationId } = useConversation()
@@ -49,6 +50,10 @@ const Form = () => {
                 className="flex items-center gap-2 lg:gap-4 w-full"
             >
                 <EmojiPicker onChange={handleEmojiChange} />
+
+                <UploadFileButton
+                    conversationId={conversationId}
+                />
 
                 <MessageInput
                     id="message"

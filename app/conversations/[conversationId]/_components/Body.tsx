@@ -1,7 +1,7 @@
 import { useConversation } from "@/app/_hooks/useConversation";
 import { FullMessageType } from "@/app/_types";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageBox from "./MessageBox";
 import { pusherClient } from "@/lib/pusher";
 import { find } from 'lodash';
@@ -15,9 +15,13 @@ const Body = ({
     initialMessages,
     isInCall
 }: BodyProps) => {
-
+    const bottomRef = useRef<HTMLDivElement>(null)
     const [messages, setMessages] = useState(initialMessages)
     const { conversationId } = useConversation()
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [messages])
 
     useEffect(() => {
         axios.post(`/api/conversations/${conversationId}/seen`)
@@ -26,6 +30,7 @@ const Body = ({
 
     useEffect(() => {
         pusherClient.subscribe(conversationId);
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
 
         const newMessageHander = (message: FullMessageType) => {
             axios.post(`/api/conversations/${conversationId}/seen`)
@@ -41,7 +46,8 @@ const Body = ({
 
         const updateMessageHandler = (receivedMessages: FullMessageType[]) => {
             setMessages((current) => current.map((currentMessage) => {
-                const matchingReceivedMessage = receivedMessages.find((receivedMessage) => receivedMessage.id === currentMessage.id);
+                const matchingReceivedMessage = receivedMessages.find((receivedMessage) => receivedMessage.id === currentMessage.id)
+
 
                 if (matchingReceivedMessage) {
                     return matchingReceivedMessage;
@@ -77,6 +83,7 @@ const Body = ({
                     )}
                 </div>
             )}
+            <div ref={bottomRef} />
         </div>
     );
 }
