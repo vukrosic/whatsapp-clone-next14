@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import MessageBox from "./MessageBox";
 import { pusherClient } from "@/lib/pusher";
 import { find } from 'lodash';
+import MediaRoom from "./MediaRoom";
 
 interface BodyProps {
     initialMessages: FullMessageType[];
@@ -72,6 +73,14 @@ const Body = ({
 
     return (
         <div className="flex-1 overflow-y-auto bg-pink-100">
+            {isInCall && (
+                <MediaRoom
+                    chatId={conversationId}
+                    video={true}
+                    audio={true}
+                />
+            )}
+
             {!isInCall && (
                 <div className="pt-24">
                     {messages.map((message, i) =>

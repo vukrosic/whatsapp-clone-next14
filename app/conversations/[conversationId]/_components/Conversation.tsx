@@ -22,10 +22,7 @@ const Conversation = ({
 }: ConversationProps) => {
     const [isInCall, setIsInCall] = useState(false)
 
-
     return (
-
-
         <div className="h-full w-full">
             <div className="h-full w-full flex flex-col">
                 <Header
