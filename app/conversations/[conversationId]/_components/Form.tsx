@@ -2,6 +2,7 @@ import { useConversation } from "@/app/_hooks/useConversation";
 import axios from "axios";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import MessageInput from "./MessageInput";
+import EmojiPicker from "./EmojiPicker";
 
 const Form = () => {
     const { conversationId } = useConversation()
@@ -27,6 +28,10 @@ const Form = () => {
         })
     }
 
+    const handleEmojiChange = (emojiValue: string) => {
+        setValue('message', `${getValues('message')}${emojiValue}`)
+    }
+
     return (
         <div className="
             py-4
@@ -43,6 +48,8 @@ const Form = () => {
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex items-center gap-2 lg:gap-4 w-full"
             >
+                <EmojiPicker onChange={handleEmojiChange} />
+
                 <MessageInput
                     id="message"
                     register={register}

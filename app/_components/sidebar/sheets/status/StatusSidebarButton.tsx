@@ -7,6 +7,7 @@ import axios from "axios";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import "@uploadthing/react/styles.css"
+import StoryViewer from "./StoryViewer";
 
 interface StatusButtonProps {
     user: User;
@@ -80,7 +81,7 @@ const StatusSidebarButton = ({
     }
     const handleDeleteStory = () => {
         toggleShowStory();
-        user.statusImageUrl = "";
+        user.statusImageUrl = null;
         axios.delete('/api/status')
             .then(() => { })
             .catch(err => {
@@ -90,6 +91,7 @@ const StatusSidebarButton = ({
 
     return (
         <div>
+            <input disabled />
             {hasStory ? (
                 <div>
                     <button onClick={toggleShowStory}>
@@ -101,7 +103,11 @@ const StatusSidebarButton = ({
                         />
                     </button>
                     {showStory && (
-                        <div>THIS IS STORY VIEWER</div>
+                        <StoryViewer
+                            user={user}
+                            onClose={() => toggleShowStory()}
+                            onDeleteStory={() => handleDeleteStory()}
+                        />
                     )
 
                     }
@@ -125,7 +131,7 @@ const StatusSidebarButton = ({
                     endpoint="statusImage"
                     appearance={{
                         allowedContent: { display: 'none' },
-                        button: { border: 'none', background: '#fff', cursor: 'pointer', height: '100%', width: '100%', justifyContent: 'start' }
+                        button: { border: 'none', background: '#fff', cursor: 'pointer', height: '100%', width: '100%', justifyContent: 'start', outline: 'none' }
                     }}
                     onUploadError={(err: Error) => {
                         console.log(err)
@@ -138,13 +144,15 @@ const StatusSidebarButton = ({
                         })
                     }}
                     onClientUploadComplete={(res) => {
-                        toast({
-                            title: "Upload complete!",
-                            className: "bg-green-500",
-                            duration: 2000,
-                        })
                         axios.post('/api/status', { statusImageUrl: res[0].url })
-                            .then(res => { user.statusImageUrl = res.data.statusImageUrl })
+                            .then(res => {
+                                user.statusImageUrl = res.data.statusImageUrl;
+                                toast({
+                                    title: "Upload complete!",
+                                    className: "bg-green-500",
+                                    duration: 2000,
+                                })
+                            })
                             .catch(error => { console.log(error) })
                     }}
                 />
