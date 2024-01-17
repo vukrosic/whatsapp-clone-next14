@@ -131,8 +131,9 @@ const StatusSidebarButton = ({
                     endpoint="statusImage"
                     appearance={{
                         allowedContent: { display: 'none' },
-                        button: { border: 'none', background: '#fff', cursor: 'pointer', height: '100%', width: '100%', justifyContent: 'start', outline: 'none' }
+                        button: "!ring-0 border-0 bg-white cursor-pointer h-full w-full justify-start"
                     }}
+                    className="uploadbtn"
                     onUploadError={(err: Error) => {
                         console.log(err)
                     }}

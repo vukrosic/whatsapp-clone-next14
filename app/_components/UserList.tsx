@@ -13,7 +13,6 @@ const UserList = ({
     return (
         <div className="
         inset-y-0
-        pb-20
         lg:pb-0
         lg:w-80
         lg:block

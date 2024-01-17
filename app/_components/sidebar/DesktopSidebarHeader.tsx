@@ -7,6 +7,7 @@ import { UserButton, useClerk } from "@clerk/nextjs";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import StatusSheet from "./sheets/status/StatusSheet";
+import ChannelsSheet from "./sheets/channel/ChannelsSheet";
 
 interface DesktopSidebarHeaderProps {
     currentUser: User & {
@@ -42,6 +43,9 @@ const DesktopSidebarHeader = ({
                         user={currentUser}
                     />
                     <NewChatSheet
+                        currentUser={currentUser}
+                    />
+                    <ChannelsSheet
                         currentUser={currentUser}
                     />
                     <LogOut className="text-[#54656f] cursor-pointer"

@@ -9,7 +9,11 @@ body {
 }
 
 *:focus {
-  outline: none
+  outline: none;
+}
+
+.uploadbtn>*[data-ut-element="button"][data-state="uploading"]::after {
+  background-color: rgba(0, 0, 0, 0);
 }
 
 @layer base {

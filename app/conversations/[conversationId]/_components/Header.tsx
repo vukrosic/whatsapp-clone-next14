@@ -49,7 +49,7 @@ const Header = ({
             follow: follow
         }).then((response: any) => {
             const updatedConversation = response.data;
-            conversation.userIds = updatedConversation.iserIds;
+            conversation.userIds = updatedConversation.userIds;
             setDisableFollowButton(false)
         }).catch((error: Error) => {
             console.log(error)
@@ -96,7 +96,7 @@ const Header = ({
                         // Code for channel case
                         <div className="flex w-full">
                             <Avatar>
-                                <AvatarImage src={conversation.profileImageUrl || undefined} />
+                                <AvatarImage className="object-cover" src={conversation.profileImageUrl || undefined} />
                                 <AvatarFallback>
                                     {conversation.name ? conversation.name.charAt(0).toUpperCase() : 'CN'}
                                 </AvatarFallback>
