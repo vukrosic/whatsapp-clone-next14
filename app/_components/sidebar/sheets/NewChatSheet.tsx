@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import NewContactSheet from "./NewContactSheet";
 import UserList from "../../UserList";
+import GroupChatModal from "../modals/GroupChatModal";
 
 interface NewChatSheetProps {
     currentUser: User & {
@@ -41,9 +42,13 @@ const NewChatSheet = ({
 
     return (
         <div>
-            {/* {(currentUser !== undefined) &&
-                <div>Create a group</div>
-            } */}
+            {(currentUser !== undefined) &&
+                <GroupChatModal
+                    users={currentUser.following}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            }
 
             <Sheet>
                 <SheetTrigger asChild>

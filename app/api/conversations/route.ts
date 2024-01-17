@@ -1,5 +1,7 @@
 import { getCurrentUser } from "@/app/_actions/getCurrentUser";
 import { db } from "@/lib/db";
+import { removePlusSign } from "@/lib/phoneNumberUtil";
+import { pusherServer } from "@/lib/pusher";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -69,6 +71,15 @@ export async function POST(
                     users: true
                 }
             })
+
+            // Update all connections with new conversation
+            newConversation.users.forEach((user) => {
+                if (user.phoneNumber) {
+                    pusherServer.trigger(removePlusSign(user.phoneNumber), 'conversation:new', newConversation)
+                }
+            })
+
+
             return NextResponse.json(newConversation)
         }
 
@@ -113,6 +124,13 @@ export async function POST(
                 users: true
             }
         })
+
+        newConversation.users.map((user) => {
+            if (user.phoneNumber) {
+                pusherServer.trigger(removePlusSign(user.phoneNumber), 'conversation:new', newConversation)
+            }
+        })
+
         return NextResponse.json(newConversation)
     } catch (error) {
         return new NextResponse('Internal Error', { status: 500 })

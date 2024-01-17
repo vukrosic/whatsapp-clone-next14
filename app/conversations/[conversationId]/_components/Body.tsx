@@ -21,6 +21,10 @@ const Body = ({
     const { conversationId } = useConversation()
 
     useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'instant' })
+    }, [isInCall])
+
+    useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 

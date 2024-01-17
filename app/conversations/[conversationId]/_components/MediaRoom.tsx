@@ -7,7 +7,7 @@ import "@livekit/components-styles"
 interface MediaRoomProps {
     chatId: string,
     video: boolean,
-    audio: boolean
+    audio: boolean,
 }
 
 const MediaRoom = ({

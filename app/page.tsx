@@ -1,10 +1,17 @@
-import { UserButton } from "@clerk/nextjs";
+"use client"
+
+import { useRouter } from "next/navigation"
+import { useEffect } from "react";
 
 export default function Page() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/conversations');
+  }, [])
+
   return (
     <div>
-      This page can only be seen my authenticated users.
-      <UserButton afterSignOutUrl="/sign-in" />
     </div>
   )
 }

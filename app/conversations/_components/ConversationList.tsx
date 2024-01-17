@@ -6,8 +6,11 @@ import { Input } from "@/components/ui/input";
 import { useClerk } from "@clerk/nextjs";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ConversationBox from "./ConversationBox";
+import { pusherClient } from "@/lib/pusher";
+import { removePlusSign } from "@/lib/phoneNumberUtil";
+import { find } from "lodash";
 
 interface ConversationListProps {
     conversations: FullConversationType[]
@@ -16,12 +19,59 @@ interface ConversationListProps {
 const ConversationList: React.FC<ConversationListProps> = ({
     conversations
 }) => {
-    const [items, seItems] = useState(conversations)
+    const [items, setItems] = useState(conversations)
     const [searchText, setSearchText] = useState("")
     const router = useRouter()
     const { user } = useClerk()
     const { conversationId, isOpen } = useConversation()
 
+    const pusherKey = useMemo(() => {
+        if (!user?.phoneNumbers[0].phoneNumber) {
+            return null;
+        }
+        const phoneNumber = removePlusSign(user?.phoneNumbers[0].phoneNumber);
+        return phoneNumber;
+    }, [user?.phoneNumbers[0].phoneNumber])
+
+    useEffect(() => {
+        if (!pusherKey) {
+            return;
+        }
+        pusherClient.subscribe(pusherKey)
+
+        const updateHandler = (conversation: FullConversationType) => {
+            setItems((current) => current.map((currentConversation) => {
+                if (currentConversation.id === conversation.id) {
+                    return {
+                        ...currentConversation,
+                        messages: conversation.messages
+                    };
+                }
+
+                return currentConversation;
+            }))
+        }
+
+        const newHandler = (conversation: FullConversationType) => {
+            setItems((current) => {
+                if (find(current, { id: conversation.id })) {
+                    return current;
+                }
+                return [conversation, ...current]
+            })
+        }
+
+        const removeHandler = (conversation: FullConversationType) => {
+            setItems((current) => {
+                return [...current.filter((conv) => conv.id !== conversation.id)]
+            })
+        }
+
+        pusherClient.bind('conversation:update', updateHandler);
+        pusherClient.bind('conversation:new', newHandler);
+        pusherClient.bind('conversation:remove', removeHandler);
+
+    }, [pusherKey, router])
 
     return (
         <aside className="h-[550px] overflow-y-auto">
